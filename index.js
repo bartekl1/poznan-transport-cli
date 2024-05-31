@@ -248,6 +248,7 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
             var agency = await fetchData("agency");
 
             if (commandOptions.search === undefined) {
+
                 var t = new Table({
                     borderStyle: 2,
                     rightPadding: 1,
@@ -273,6 +274,40 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
                 tableString = tableArray.join("\n");
                 
                 console.log(tableString);
+            } else {
+                routes.forEach((route) => {
+                    if (route.route_id === commandOptions.search) {
+                        var agencyName;
+                        agency.forEach((e) => { if (e.agency_id === route.agency_id) agencyName = e.agency_name });
+
+                        console.log(chalk.bold(`ROUTE ${route.route_id}`));
+                        console.log(`${chalk.bold("Direction:")} ${route.route_long_name.split("|")[0]}`);
+                        console.log(`${chalk.bold("Type:")} ${{0: "Tram", 3: "Bus"}[route.route_type]}`);
+                        console.log(`${chalk.bold("Agency:")} ${agencyName}`);
+                        if (route.route_desc.includes("NA LINII NIE OBOWIĄZUJE TARYFA ZTM")) console.log("ZTM tariff does not apply on the line");
+
+                        var streets = [];
+                        route.route_desc.split("|").forEach((e) => {
+                            var streets2 = e.split("^")[0].split(" - ");
+                            for (const [i, street] of streets2.entries()) 
+                                if (street === street.toUpperCase()) streets2[i] = chalk.bold(street);
+                            streets.push(streets2);
+                        });
+                        streets = streets[0].map((_, colIndex) => streets.map(row => row[colIndex]));
+
+                        var t = new Table({
+                            borderStyle: 2,
+                            rightPadding: 1,
+                            leftPadding: 1
+                        });
+                        streets.forEach((row) => t.push(row));
+
+                        console.log("\n" + chalk.bold("Route:"));
+                        console.log(t.toString());
+
+                        process.exit(0);
+                    }
+                })
             }
         })();
     }
