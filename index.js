@@ -30,7 +30,7 @@ async function fetchData(data) {
         }
         var buffer = await response.arrayBuffer();
         var zip = await JSZip.loadAsync(buffer);
-        var file = await zip.file({trips: "trips.txt"}[data]).async("string");
+        var file = await zip.file(data + ".txt").async("string");
         var result = Papa.parse(file, { header: true }).data;
         return result;
     } catch (error) {
@@ -66,6 +66,7 @@ const sections = [
         header: "COMMANDS",
         content: [
             { name: "position", summary: "Vehicle position" },
+            { name: "route", summary: "Routes" },
             { name: "timetable", summary: "Timetable" },
             { name: "version", summary: "Display version info" },
             { name: "help", summary: "Display this help message" },
@@ -216,7 +217,64 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
                 console.log("Please check your internet connection and try again later");
                 process.exit(1);
             }
-        })()
+        })();
+    }
+} else if (mainOptions.command === "route") {
+    const commandDefinitions = [
+        { name: "search", type: String, defaultOption: true },
+    ];
+    const commandOptions = commandLineArgs(commandDefinitions, { argv });
+
+    if (mainOptions.help) {
+        const sections = [
+            {
+                header: "Route",
+                content: "Get routes",
+            },
+            {
+                header: "USAGE",
+                content: "$ poznan-transport-cli route <search>",
+            },
+            {
+                header: "SEARCH",
+                content: "You can search vehicle by line number.",
+            },
+        ];
+        const usage = commandLineUsage(sections);
+        console.log(usage);
+    } else {
+        (async () => {
+            var routes = await fetchData("routes");
+            var agency = await fetchData("agency");
+
+            if (commandOptions.search === undefined) {
+                var t = new Table({
+                    borderStyle: 2,
+                    rightPadding: 1,
+                    leftPadding: 1
+                });
+                t.push([chalk.bold("Line"), chalk.bold("Type"), chalk.bold("Direction"), chalk.bold("Agency")]);
+                t.push([""]);
+
+                routes.forEach((route) => {
+                    if (route.route_id !== "") {
+                        var agencyName;
+                        agency.forEach((e) => { if (e.agency_id === route.agency_id) agencyName = e.agency_name });
+                        t.push([route.route_id, {0: "Tram", 3: "Bus"}[route.route_type], route.route_long_name.split("|")[0], agencyName]);
+                    }
+                });
+
+                var tableString = t.toString();
+                var tableArray = tableString.split("\n");
+                tableArray[2] = tableArray[2].replaceAll(" ", t.border.mid);
+                tableArray[2] = tableArray[2].replaceAll(t.border.sep, t.border.midMid);
+                tableArray[2] = t.border.midLeft + tableArray[2].substring(1);
+                tableArray[2] = tableArray[2].substring(0, tableArray[2].length - 1) + t.border.midRight;
+                tableString = tableArray.join("\n");
+                
+                console.log(tableString);
+            }
+        })();
     }
 } else if (mainOptions.command === "timetable") {
 
