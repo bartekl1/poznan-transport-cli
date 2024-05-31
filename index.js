@@ -7,14 +7,39 @@ const commandLineUsage = require("command-line-usage");
 const fse = require("fs-extra");
 const chalk = require("chalk");
 const Table = require("terminal-table");
+const JSZip = require("jszip");
+const Papa = require("papaparse");
 
 const version = fse.readJSONSync("package.json").version;
 const nodeVersion = process.versions.node;
 
 const URLs = {
     vehiclePositions: "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=vehicle_positions.pb",
+    timetables: "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGTFSFile",
     projectHome: "https://github.com/bartekl1/poznan-transport-cli",
 };
+
+async function fetchData(data) {
+    try {
+        var response = await fetch(URLs.timetables);
+        if (!response.ok) {
+            console.log(chalk.red("ERROR"), "HTTP error");
+            console.log(`${response.url}: ${response.status} ${response.statusText}`);
+            console.log("Please check your internet connection and try again later");
+            process.exit(1);
+        }
+        var buffer = await response.arrayBuffer();
+        var zip = await JSZip.loadAsync(buffer);
+        var file = await zip.file({trips: "trips.txt"}[data]).async("string");
+        var result = Papa.parse(file, { header: true }).data;
+        return result;
+    } catch (error) {
+        console.log(chalk.red("ERROR"), "Fetch error");
+        console.log(`${error.name}: ${error.message}`);
+        console.log("Please check your internet connection and try again later");
+        process.exit(1);
+    }
+}
 
 const mainDefinitions = [
     { name: "command", defaultOption: true },
@@ -138,57 +163,60 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
         const usage = commandLineUsage(sections);
         console.log(usage);
     } else {
-        fetch(URLs.vehiclePositions)
-        .then((response) => {
-            if (!response.ok) {
-                console.log(chalk.red("ERROR"), "HTTP error");
-                console.log(`${response.url}: ${response.status} ${response.statusText}`);
+        (async () => {
+            try {
+                var response = await fetch(URLs.vehiclePositions);
+                if (!response.ok) {
+                    console.log(chalk.red("ERROR"), "HTTP error");
+                    console.log(`${response.url}: ${response.status} ${response.statusText}`);
+                    console.log("Please check your internet connection and try again later");
+                    process.exit(1);
+                }
+                var buffer = await response.arrayBuffer();
+                var trips = await fetchData("trips");
+
+                const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
+                    new Uint8Array(buffer)
+                );
+
+                var t = new Table({
+                    borderStyle: 2,
+                    rightPadding: 1,
+                    leftPadding: 1
+                });
+                t.push([chalk.bold("Line"), chalk.bold("Vehicle"), chalk.bold("Brigade"), chalk.bold("Position"), chalk.bold("Direction")]);
+                t.push([""]);
+
+                var found = false;
+
+                feed.entity.forEach((entity) => {
+                    if (commandOptions.search === undefined || (commandOptions.search === entity.vehicle.trip.routeId && commandOptions["line-number"]) || (commandOptions.search === entity.vehicle.vehicle.id && commandOptions["vehicle-number"]) || (commandOptions.search === entity.vehicle.vehicle.label && commandOptions["brigade-number"]) || ((commandOptions.search === entity.vehicle.trip.routeId || commandOptions.search === entity.vehicle.vehicle.id || commandOptions.search === entity.vehicle.vehicle.label) && commandOptions["line-number"] === undefined && commandOptions["vehicle-number"] === undefined && commandOptions["brigade-number"] === undefined)) {
+                        var direction;
+                        trips.forEach((trip) => {
+                            if (trip.trip_id === entity.vehicle.trip.tripId) direction = trip.trip_headsign;
+                        });
+                        t.push([entity.vehicle.trip.routeId, entity.vehicle.vehicle.id, entity.vehicle.vehicle.label, `${entity.vehicle.position.latitude}, ${entity.vehicle.position.longitude}`, direction]);
+                        found = true;
+                    }
+                });
+
+                var tableString = t.toString();
+                var tableArray = tableString.split("\n");
+                tableArray[2] = tableArray[2].replaceAll(" ", t.border.mid);
+                tableArray[2] = tableArray[2].replaceAll(t.border.sep, t.border.midMid);
+                tableArray[2] = t.border.midLeft + tableArray[2].substring(1);
+                tableArray[2] = tableArray[2].substring(0, tableArray[2].length - 1) + t.border.midRight;
+                tableString = tableArray.join("\n");
+                
+                if (found) console.log(tableString);
+                else console.log("Not found any vehicles");
+            } catch (error) {
+                console.log(chalk.red("ERROR"), "Fetch error");
+                console.log(`${error.name}: ${error.message}`);
                 console.log("Please check your internet connection and try again later");
                 process.exit(1);
             }
-
-            return response.arrayBuffer();
-        })
-        .then((buffer) => {
-            const feed = GtfsRealtimeBindings.transit_realtime.FeedMessage.decode(
-                new Uint8Array(buffer)
-            );
-
-            var t = new Table({
-                borderStyle: 2,
-                rightPadding: 1,
-                leftPadding: 1
-            });
-            t.push([chalk.bold("Line"), chalk.bold("Vehicle"), chalk.bold("Brigade"), chalk.bold("Position")]);
-            t.push([""]);
-
-            var found = false;
-
-            feed.entity.forEach((entity) => {
-                if (commandOptions.search === undefined || (commandOptions.search === entity.vehicle.trip.routeId && commandOptions["line-number"]) || (commandOptions.search === entity.vehicle.vehicle.id && commandOptions["vehicle-number"]) || (commandOptions.search === entity.vehicle.vehicle.label && commandOptions["brigade-number"]) || ((commandOptions.search === entity.vehicle.trip.routeId || commandOptions.search === entity.vehicle.vehicle.id || commandOptions.search === entity.vehicle.vehicle.label) && commandOptions["line-number"] === undefined && commandOptions["vehicle-number"] === undefined && commandOptions["brigade-number"] === undefined)) {
-                    t.push([entity.vehicle.trip.routeId, entity.vehicle.vehicle.id, entity.vehicle.vehicle.label, `${entity.vehicle.position.latitude}, ${entity.vehicle.position.longitude}`]);
-                    found = true;
-                    console.log(entity.vehicle.trip.tripId)
-                }
-            });
-
-            var tableString = t.toString();
-            var tableArray = tableString.split("\n");
-            tableArray[2] = tableArray[2].replaceAll(" ", t.border.mid);
-            tableArray[2] = tableArray[2].replaceAll(t.border.sep, t.border.midMid);
-            tableArray[2] = t.border.midLeft + tableArray[2].substring(1);
-            tableArray[2] = tableArray[2].substring(0, tableArray[2].length - 1) + t.border.midRight;
-            tableString = tableArray.join("\n");
-            
-            if (found) console.log(tableString);
-            else console.log("Not found any vehicles");
-        })
-        .catch((error) => {
-            console.log(chalk.red("ERROR"), "Fetch error");
-            console.log(`${error.name}: ${error.message}`);
-            console.log("Please check your internet connection and try again later");
-            process.exit(1);
-        });
+        })()
     }
 } else if (mainOptions.command === "timetable") {
 

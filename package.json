@@ -22,11 +22,26 @@
     "command-line-usage": "^7.0.1",
     "fs-extra": "^11.2.0",
     "gtfs-realtime-bindings": "^1.1.1",
+    "jszip": "^3.10.1",
     "node-fetch": "^2.7.0",
+    "papaparse": "^5.4.1",
     "terminal-table": "^0.0.12"
   },
   "bin": {
     "poznan-transport-cli": "./index.js"
   },
-  "keywords": ["cli", "cli-app", "command-line-tool", "api-client", "gtfs-realtime", "transport", "public-transport", "vehicle-position", "timetable", "poznan", "ztm-poznan", "poznan-ztm"]
+  "keywords": [
+    "cli",
+    "cli-app",
+    "command-line-tool",
+    "api-client",
+    "gtfs-realtime",
+    "transport",
+    "public-transport",
+    "vehicle-position",
+    "timetable",
+    "poznan",
+    "ztm-poznan",
+    "poznan-ztm"
+  ]
 }
