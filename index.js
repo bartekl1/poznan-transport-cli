@@ -153,11 +153,11 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
 
             var t = new Table({
                 borderStyle: 2,
-                horizontalLine: true,
                 rightPadding: 1,
                 leftPadding: 1
             });
             t.push([chalk.bold("Line"), chalk.bold("Vehicle"), chalk.bold("Brigade"), chalk.bold("Position")]);
+            t.push([""]);
 
             var found = false;
 
@@ -167,8 +167,16 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
                     found = true;
                 }
             });
+
+            var tableString = t.toString();
+            var tableArray = tableString.split("\n");
+            tableArray[2] = tableArray[2].replaceAll(" ", t.border.mid);
+            tableArray[2] = tableArray[2].replaceAll(t.border.sep, t.border.midMid);
+            tableArray[2] = t.border.midLeft + tableArray[2].substring(1);
+            tableArray[2] = tableArray[2].substring(0, tableArray[2].length - 1) + t.border.midRight;
+            tableString = tableArray.join("\n");
             
-            if (found) console.log(t.toString());
+            if (found) console.log(tableString);
             else console.log("Not found any vehicles");
         });
     }
