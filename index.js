@@ -11,6 +11,11 @@ const Table = require("terminal-table");
 const version = fse.readJSONSync("package.json").version;
 const nodeVersion = process.versions.node;
 
+const URLs = {
+    vehiclePositions: "https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=vehicle_positions.pb",
+    projectHome: "https://github.com/bartekl1/poznan-transport-cli",
+};
+
 const mainDefinitions = [
     { name: "command", defaultOption: true },
     { name: "help", alias: "h", type: Boolean },
@@ -60,7 +65,7 @@ const sections = [
     },
     {
         header: "PROJECT HOME",
-        content: "{underline https://github.com/bartekl1/poznan-transport-cli}",
+        content: `{underline ${URLs.projectHome}}`,
     },
 ];
 
@@ -133,14 +138,12 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
         const usage = commandLineUsage(sections);
         console.log(usage);
     } else {
-        fetch("https://www.ztm.poznan.pl/pl/dla-deweloperow/getGtfsRtFile?file=vehicle_positions.pb")
+        fetch(URLs.vehiclePositions)
         .then((response) => {
             if (!response.ok) {
-                const error = new Error(
-                    `${response.url}: ${response.status} ${response.statusText}`
-                );
-                error.response = response;
-                throw error;
+                console.log(chalk.red("ERROR"), "HTTP error");
+                console.log(`${response.url}: ${response.status} ${response.statusText}`);
+                console.log("Please check your internet connection and try again later");
                 process.exit(1);
             }
 
@@ -165,6 +168,7 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
                 if (commandOptions.search === undefined || (commandOptions.search === entity.vehicle.trip.routeId && commandOptions["line-number"]) || (commandOptions.search === entity.vehicle.vehicle.id && commandOptions["vehicle-number"]) || (commandOptions.search === entity.vehicle.vehicle.label && commandOptions["brigade-number"]) || ((commandOptions.search === entity.vehicle.trip.routeId || commandOptions.search === entity.vehicle.vehicle.id || commandOptions.search === entity.vehicle.vehicle.label) && commandOptions["line-number"] === undefined && commandOptions["vehicle-number"] === undefined && commandOptions["brigade-number"] === undefined)) {
                     t.push([entity.vehicle.trip.routeId, entity.vehicle.vehicle.id, entity.vehicle.vehicle.label, `${entity.vehicle.position.latitude}, ${entity.vehicle.position.longitude}`]);
                     found = true;
+                    console.log(entity.vehicle.trip.tripId)
                 }
             });
 
@@ -178,6 +182,12 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
             
             if (found) console.log(tableString);
             else console.log("Not found any vehicles");
+        })
+        .catch((error) => {
+            console.log(chalk.red("ERROR"), "Fetch error");
+            console.log(`${error.name}: ${error.message}`);
+            console.log("Please check your internet connection and try again later");
+            process.exit(1);
         });
     }
 } else if (mainOptions.command === "timetable") {
