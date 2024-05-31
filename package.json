@@ -27,5 +27,6 @@
   },
   "bin": {
     "poznan-transport-cli": "./index.js"
-  }
+  },
+  "keywords": ["cli", "cli-app", "command-line-tool", "api-client", "gtfs-realtime", "transport", "public-transport", "vehicle-position", "timetable", "poznan", "ztm-poznan", "poznan-ztm"]
 }
