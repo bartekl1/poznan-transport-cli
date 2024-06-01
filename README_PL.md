@@ -1,42 +1,41 @@
 # ⛅ poznan-transport-cli
 
-Unofficial command line interface for ZTM Poznań API \
-Check positions and timetables for buses and trams in Poznań
+Nieoficjalny interfejs wiersza poleceń dla API ZTM Poznań \
+Sprawdzaj lokalizację i rozkłady jazdy autobusów i tramwajów w Poznaniu
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/bartekl1/poznan-transport-cli?style=flat-square)
 ![GitHub Repo stars](https://img.shields.io/github/stars/bartekl1/poznan-transport-cli?style=flat-square)
 ![GitHub watchers](https://img.shields.io/github/watchers/bartekl1/poznan-transport-cli?style=flat-square)
 ![GitHub forks](https://img.shields.io/github/forks/bartekl1/poznan-transport-cli?style=flat-square)
 
-<!-- [📖 Documentation](https://github.com/bartekl1/poznan-transport-cli/wiki) -->
-[🕑 Changelog](https://github.com/bartekl1/poznan-transport-cli/blob/main/CHANGELOG.md)
-[🎁 Acknowledgements](https://github.com/bartekl1/poznan-transport-cli/blob/main/ACKNOWLEDGEMENTS.md)
-[🇵🇱 Polish version of README](https://github.com/bartekl1/poznan-transport-cli/blob/main/README_PL.md)
+<!-- [📖 Dokumentacja](https://github.com/bartekl1/poznan-transport-cli/wiki) -->
+[🕑 Rejestr zmian](https://github.com/bartekl1/poznan-transport-cli/blob/main/CHANGELOG_PL.md)
+[🎁 Podziękowania](https://github.com/bartekl1/poznan-transport-cli/blob/main/ACKNOWLEDGEMENTS_PL.md)
 
-## Available functions
+## Dostępne funkcje
 
-- Check position of vehicle
-- List all lines
-- Get line description
-- Check timetable
+- Sprawdzanie lokalizacji pojazdów
+- Lista wszystkich lini
+- Opis lini
+- Rozkłady jazdy
 
-## Installation
+## Instalacja
 
-[Node.js](https://nodejs.org/) is required to install and use this program.
+[Node.js](https://nodejs.org/) jest wymagany aby zainstalować i korzystać z tego programu.
 
 ```bash
 npm install -g poznan-transport-cli
 ```
 
-## Usage
+## Korzystanie
 
 ```bash
 poznan-transport-cli <command> <options>
 ```
 
-### Get help
+### Pomoc
 
-#### Global help
+#### Pomoc globalna
 
 ```bash
 poznan-transport-cli help
@@ -44,14 +43,14 @@ poznan-transport-cli --help
 poznan-transport-cli -h
 ```
 
-#### Command help
+#### Pomoc dotycząca polecenia
 
 ```bash
 poznan-transport-cli <command> --help
 poznan-transport-cli <command> -h
 ```
 
-### Get version
+### Wersja
 
 ```bash
 poznan-transport-cli version
@@ -59,25 +58,25 @@ poznan-transport-cli --version
 poznan-transport-cli -v
 ```
 
-### Vehicle positions
+### Lokalizacja pojazdu
 
 ```bash
 poznan-transport-cli position <options> <search>
 ```
 
-Command displays line number, vehicle number, brigade number, position and direction.
+Polecenie wyświetla numer lini, numer pojazdu, numer brygady, lokalizację i kierunek docelowy.
 
-#### Search
+#### Wyszukiwanie
 
-If you do not specify a search query, the command displays the positions of all vehicles.
+Jeśli nie podasz zapytania, polecenie wyświetli lokalizacje wszystkich pojazdów.
 
-You can search by line number, vehicle number or brigade number.
+Możesz szukać za pomocą numeru lini, numeru pojazdu lub numeru brygady.
 
-If you pass `--line-number` argument, the command searches only by line number.
-If you pass `--vehicle-number` argument, the command searches only by vehicle number.
-If you pass `--brigade-number` argument, the command searches only by brigade number.
+Jeśli podasz argument `--line-number`, polecenie będzie szukać tylko za pomocą numeru lini.
+Jeśli podasz argument `--vehicle-number`, polecenie będzie szukać tylko za pomocą numeru pojazdu.
+Jeśli podasz argument `--brigade-number`, polecenie będzie szukać tylko za pomocą numeru brygady.
 
-#### Example commands
+#### Przykłady poleceń
 
 ```bash
 poznan-transport-cli position
@@ -87,15 +86,15 @@ poznan-transport-cli position 427 --vehicle-number
 poznan-transport-cli position 5/9 --brigade-number
 ```
 
-#### Example
+#### Przykład
 
-Command:
+Polecenie:
 
 ```bash
 poznan-transport-cli position 5
 ```
 
-Output:
+Wyjście:
 
 ```text
 ┌──────┬─────────┬─────────┬────────────────────────────────────────┬──────────────┐
@@ -109,27 +108,27 @@ Output:
 └──────┴─────────┴─────────┴────────────────────────────────────────┴──────────────┘
 ```
 
-### Routes
+### Trasy
 
 ```bash
 poznan-transport-cli route <search>
 ```
 
-Command displays line number, vehicle type, direction and agency.
+Polecenie wyświetla numer lini, typ pojazdu, kierunek i przewoźnika.
 
-If you do not specify a search query, the command displays all routes.
+Jeśli nie podasz zapytania, polecenie wyświetli wszystkie trasy.
 
-#### Examples
+#### Przykłady
 
 1.
 
-Command:
+Polecenie:
 
 ```bash
 poznan-transport-cli route
 ```
 
-Output:
+Wyjście:
 
 ```text
 ┌──────┬──────┬──────────────────────────────────────────────────────────────┬───────────────────────────────────────────────────────────────┐
@@ -153,13 +152,13 @@ Output:
 
 2.
 
-Command:
+Polecenie:
 
 ```bash
 poznan-transport-cli route 5
 ```
 
-Output:
+Wyjście:
 
 ```text
 ROUTE 5
@@ -187,23 +186,23 @@ Route:
 └───────────────────────┴───────────────────────┘
 ```
 
-### Timetables
+### Rozkłady jazdy
 
 ```bash
 poznan-transport-cli timetable <line> <stop>
 ```
 
-You need to specify line number and stop ID.
+Musisz podać numer lini i identyfikator przystanku.
 
-#### Example
+#### Przykład
 
-Command:
+Polecenie:
 
 ```bash
 poznan-transport-cli timetable 5 134
 ```
 
-Output:
+Wyjście:
 
 ```text
  WORKDAYS                   SATURDAYS                  SUNDAYS
