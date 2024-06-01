@@ -10,7 +10,9 @@ const Table = require("terminal-table");
 const JSZip = require("jszip");
 const Papa = require("papaparse");
 
-const version = fse.readJSONSync("package.json").version;
+const path = require("path");
+
+const version = fse.readJSONSync(path.join(__dirname, "package.json")).version;
 const nodeVersion = process.versions.node;
 
 const URLs = {
