@@ -312,7 +312,125 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
         })();
     }
 } else if (mainOptions.command === "timetable") {
+    const commandDefinitions = [
+        { name: "search", type: String, defaultOption: true, multiple: true },
+    ];
+    const commandOptions = commandLineArgs(commandDefinitions, { argv });
 
+    if (commandOptions.search === undefined || commandOptions.search.length !== 2) {
+        console.log(chalk.red("ERROR"), "Line and stop ID required");
+        console.log(`Use ${chalk.italic(chalk.blue("poznan-transport-cli timetable --help"))} for help`);
+        process.exit(1);
+    }
+
+    if (mainOptions.help) {
+        const sections = [
+            {
+                header: "Timetable",
+                content: "Get timetable for line and stop",
+            },
+            {
+                header: "USAGE",
+                content: "$ poznan-transport-cli timetable <line> <stop>",
+            },
+        ];
+        const usage = commandLineUsage(sections);
+        console.log(usage);
+    } else {
+        (async () => {
+            var calendar = await fetchData("calendar");
+            var trips = await fetchData("trips");
+            var stopTimes = await fetchData("stop_times");
+
+            var routeTrips = {};
+            var calendar_days = {};
+            var timetable = {working_days: {}, saturdays: {}, sundays: {}};
+
+            calendar.forEach((e) => {
+                if (e.monday === "1" || e.tuesday === "1" || e.wednesday === "1" || e.thursday === "1" || e.friday === "1") calendar_days[e.service_id] = "working_days";
+                if (e.saturday === "1") calendar_days[e.service_id] = "saturdays";
+                if (e.sunday === "1") calendar_days[e.service_id] = "sundays";
+            });
+
+            trips.forEach((trip) => {
+                if (trip.route_id === commandOptions.search[0]) {
+                    routeTrips[trip.trip_id] = trip;
+                }
+            });
+
+            ["working_days", "saturdays", "sundays"].forEach((e) => {
+                for (var i = 0; i < 24; i++) timetable[e][String(i).padStart(2, '0')] = [];
+            });
+
+            stopTimes.forEach((e) => {
+                if (e.stop_id === commandOptions.search[1] && Object.keys(routeTrips).includes(e.trip_id)) {
+                    if (!timetable[calendar_days[routeTrips[e.trip_id].service_id]][e.departure_time.split(":")[0]].includes(e.departure_time.split(":")[1]))
+                        timetable[calendar_days[routeTrips[e.trip_id].service_id]][e.departure_time.split(":")[0]].push(e.departure_time.split(":")[1]);
+                }
+            });
+
+            for (var i = 0; i < 24; i++) {
+                if (timetable.working_days[String(i).padStart(2, '0')].length === 0 && timetable.saturdays[String(i).padStart(2, '0')].length === 0 && timetable.sundays[String(i).padStart(2, '0')].length === 0) {
+                    delete timetable.working_days[String(i).padStart(2, '0')];
+                    delete timetable.saturdays[String(i).padStart(2, '0')];
+                    delete timetable.sundays[String(i).padStart(2, '0')];
+                } else break;
+            }
+
+            for (var i = 23; i >= 0; i--) {
+                if (timetable.working_days.hasOwnProperty(String(i).padStart(2, '0')) && timetable.working_days[String(i).padStart(2, '0')].length === 0 && timetable.saturdays[String(i).padStart(2, '0')].length === 0 && timetable.sundays[String(i).padStart(2, '0')].length === 0) {
+                    delete timetable.working_days[String(i).padStart(2, '0')];
+                    delete timetable.saturdays[String(i).padStart(2, '0')];
+                    delete timetable.sundays[String(i).padStart(2, '0')];
+                } else break;
+            }
+
+            var maxWidth = 0;
+
+            ["working_days", "saturdays", "sundays"].forEach((e) => {
+                for (const [hour, minutes] of Object.entries(timetable[e])) {
+                    timetable[e][hour] = minutes.sort().join(" ");
+                    if (timetable[e][hour].length > maxWidth) maxWidth = timetable[e][hour].length;
+                }
+            });
+
+            var tables = {
+                working_days: new Table({
+                    borderStyle: 2,
+                    rightPadding: 1,
+                    leftPadding: 1
+                }),
+                saturdays: new Table({
+                    borderStyle: 2,
+                    rightPadding: 1,
+                    leftPadding: 1
+                }),
+                sundays: new Table({
+                    borderStyle: 2,
+                    rightPadding: 1,
+                    leftPadding: 1
+                }),
+            };
+
+            ["working_days", "saturdays", "sundays"].forEach((e) => {
+                var hours = Object.keys(timetable[e]);
+                hours.sort();
+                
+                for (const hour of hours) {
+                    tables[e].push([hour, timetable[e][hour] + new Array(maxWidth - timetable[e][hour].length + 1).join(" ")]);
+                }
+            });
+
+            var tableWidth = maxWidth + 9;
+            console.log(` WORKDAYS${new Array(tableWidth - 9 + 3).join(" ")}SATURDAYS${new Array(tableWidth - 10 + 3).join(" ")}SUNDAYS`);
+
+            tables.working_days.toString().split("\n").map(function(e, i) {
+                return [e, tables.saturdays.toString().split("\n")[i], tables.sundays.toString().split("\n")[i]];
+            }).forEach(e => {
+                console.log(e.join(" "));
+            })
+        })();
+    }
 } else if (mainOptions.command === undefined) {
     console.log(chalk.red("ERROR"), "Command not specified");
     console.log(`Use ${chalk.italic(chalk.blue("poznan-transport-cli help"))} for help`);
