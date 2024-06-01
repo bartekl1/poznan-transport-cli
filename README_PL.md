@@ -1,4 +1,4 @@
-# ⛅ poznan-transport-cli
+# 🚊 poznan-transport-cli
 
 Nieoficjalny interfejs wiersza poleceń dla API ZTM Poznań \
 Sprawdzaj lokalizację i rozkłady jazdy autobusów i tramwajów w Poznaniu

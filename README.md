@@ -1,4 +1,4 @@
-# ⛅ poznan-transport-cli
+# 🚊 poznan-transport-cli
 
 Unofficial command line interface for ZTM Poznań API \
 Check positions and timetables for buses and trams in Poznań
