@@ -101,8 +101,8 @@ Wyjście:
 │ Line │ Vehicle │ Brigade │ Position                               │ Direction    │
 ├──────┼─────────┼─────────┼────────────────────────────────────────┼──────────────┤
 │ 5    │ 450     │ 5/10    │ 52.38100814819336, 16.879940032958984  │ Zawady       │
-│ 5    │ 436     │ 5/6     │ 52.40298843383789, 16.915029525756836  │ Górczyn PKM │
-│ 5    │ 447     │ 5/7     │ 52.4033317565918, 16.954439163208008   │ Górczyn PKM │
+│ 5    │ 436     │ 5/6     │ 52.40298843383789, 16.915029525756836  │ Górczyn PKM  │
+│ 5    │ 447     │ 5/7     │ 52.4033317565918, 16.954439163208008   │ Górczyn PKM  │
 │ 5    │ 418     │ 5/8     │ 52.40589904785156, 16.93073081970215   │ Zawady       │
 │ 5    │ 427     │ 5/9     │ 52.381099700927734, 16.881160736083984 │ Zawady       │
 └──────┴─────────┴─────────┴────────────────────────────────────────┴──────────────┘
@@ -137,15 +137,15 @@ Wyjście:
 │ 0    │ Tram │ PL. WIELKOPOLSKI - PL. WIELKOPOLSKI                          │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
 │ 1    │ Tram │ BUDZISZYŃSKA - FRANOWO                                       │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
 │ 2    │ Tram │ DĘBIEC PKM - STARE ZOO                                       │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
-│ 3    │ Tram │ UNII LUBELSKIEJ - BŁAŻEJA                                   │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
+│ 3    │ Tram │ UNII LUBELSKIEJ - BŁAŻEJA                                    │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
 │ 5    │ Tram │ ZAWADY - GÓRCZYN PKM                                         │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
-│ 6    │ Tram │ MIŁOSTOWO - BUDZISZYŃSKA                                    │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
-│ 7    │ Tram │ POŁABSKA - OGRODY                                           │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
-│ 8    │ Tram │ OGRODY - MIŁOSTOWO                                          │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
+│ 6    │ Tram │ MIŁOSTOWO - BUDZISZYŃSKA                                     │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
+│ 7    │ Tram │ POŁABSKA - OGRODY                                            │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
+│ 8    │ Tram │ OGRODY - MIŁOSTOWO                                           │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
 │ 9    │ Tram │ DĘBIEC PKM - PIĄTKOWSKA                                      │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
 ...
-│ 905  │ Bus  │ OS. SOBIESKIEGO - CHLUDOWO SZKOŁA                           │ Zakład Komunikacji Publicznej Suchy Las Sp. z o.o.           │
-│ 907  │ Bus  │ OS. SOBIESKIEGO - CHLUDOWO SZKOŁA                           │ Zakład Komunikacji Publicznej Suchy Las Sp. z o.o.           │
+│ 905  │ Bus  │ OS. SOBIESKIEGO - CHLUDOWO SZKOŁA                            │ Zakład Komunikacji Publicznej Suchy Las Sp. z o.o.            │
+│ 907  │ Bus  │ OS. SOBIESKIEGO - CHLUDOWO SZKOŁA                            │ Zakład Komunikacji Publicznej Suchy Las Sp. z o.o.            │
 │ 911  │ Bus  │ RONDO ŚRÓDKA - BIEDRUSKO PARK                                │ Miejskie Przedsiębiorstwo Komunikacyjne Sp. z o.o. w Poznaniu │
 └──────┴──────┴──────────────────────────────────────────────────────────────┴───────────────────────────────────────────────────────────────┘
 ```
@@ -170,18 +170,18 @@ Route:
 ┌───────────────────────┬───────────────────────┐
 │ ZAWADY                │ GÓRCZYN PKM           │
 │ Podwale               │ Matyi                 │
-│ Jana Pawła II        │ Towarowa              │
-│ Kórnicka             │ Święty Marcin         │
+│ Jana Pawła II         │ Towarowa              │
+│ Kórnicka              │ Święty Marcin         │
 │ Mostowa               │ Aleje Marcinkowskiego │
-│ pl. Bernardyński     │ Podgórna             │
-│ Podgórna             │ pl. Bernardyński     │
+│ pl. Bernardyński      │ Podgórna              │
+│ Podgórna              │ pl. Bernardyński      │
 │ Aleje Marcinkowskiego │ Mostowa               │
-│ 27 Grudnia            │ Kórnicka             │
-│ Gwarna                │ Jana Pawła II        │
+│ 27 Grudnia            │ Kórnicka              │
+│ Gwarna                │ Jana Pawła II         │
 │ Święty Marcin         │ Podwale               │
 │ Towarowa              │ ZAWADY                │
 │ Matyi                 │                       │
-│ Głogowska            │                       │
+│ Głogowska             │                       │
 │ GÓRCZYN PKM           │                       │
 └───────────────────────┴───────────────────────┘
 ```
