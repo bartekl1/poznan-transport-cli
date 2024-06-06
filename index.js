@@ -367,12 +367,6 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
     ];
     const commandOptions = commandLineArgs(commandDefinitions, { argv });
 
-    if (commandOptions.search === undefined || commandOptions.search.length !== 2) {
-        console.log(chalk.red("ERROR"), "Line and stop ID required");
-        console.log(`Use ${chalk.italic(chalk.blue("poznan-transport-cli timetable --help"))} for help`);
-        process.exit(1);
-    }
-
     if (mainOptions.help) {
         const sections = [
             {
@@ -387,6 +381,12 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
         const usage = commandLineUsage(sections);
         console.log(usage);
     } else {
+        if (commandOptions.search === undefined || commandOptions.search.length !== 2) {
+            console.log(chalk.red("ERROR"), "Line and stop ID required");
+            console.log(`Use ${chalk.italic(chalk.blue("poznan-transport-cli timetable --help"))} for help`);
+            process.exit(1);
+        }
+
         (async () => {
             var calendar = await fetchData("calendar");
             var trips = await fetchData("trips");
