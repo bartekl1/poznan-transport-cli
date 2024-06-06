@@ -209,6 +209,20 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
                 tableArray[2] = tableArray[2].replaceAll(t.border.sep, t.border.midMid);
                 tableArray[2] = t.border.midLeft + tableArray[2].substring(1);
                 tableArray[2] = tableArray[2].substring(0, tableArray[2].length - 1) + t.border.midRight;
+                var headerWidths = [];
+                tableArray[1].split(t.border.sep).forEach((e) => {
+                    headerWidths.push(e.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").replace(/\[\d+m/g, "").length);
+                });
+                for (const [i, rowStr] of tableArray.slice(3).entries()) {
+                    var row = rowStr.split(t.border.sep);
+                    for (var [j, cell] of row.entries()) {
+                        while (cell.length < headerWidths[j]) {
+                            cell += " ";
+                            row[j] += " ";
+                        }
+                    }
+                    tableArray[i + 3] = row.join(t.border.sep)
+                }
                 tableString = tableArray.join("\n");
                 
                 if (found) console.log(tableString);
@@ -273,6 +287,20 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
                 tableArray[2] = tableArray[2].replaceAll(t.border.sep, t.border.midMid);
                 tableArray[2] = t.border.midLeft + tableArray[2].substring(1);
                 tableArray[2] = tableArray[2].substring(0, tableArray[2].length - 1) + t.border.midRight;
+                var headerWidths = [];
+                tableArray[1].split(t.border.sep).forEach((e) => {
+                    headerWidths.push(e.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").replace(/\[\d+m/g, "").length);
+                });
+                for (const [i, rowStr] of tableArray.slice(3).entries()) {
+                    var row = rowStr.split(t.border.sep);
+                    for (var [j, cell] of row.entries()) {
+                        while (cell.length < headerWidths[j]) {
+                            cell += " ";
+                            row[j] += " ";
+                        }
+                    }
+                    tableArray[i + 3] = row.join(t.border.sep)
+                }
                 tableString = tableArray.join("\n");
                 
                 console.log(tableString);
@@ -302,10 +330,30 @@ if (mainOptions.command === "help" || (mainOptions.help && mainOptions.command =
                             rightPadding: 1,
                             leftPadding: 1
                         });
+                        t.push([""]);
                         streets.forEach((row) => t.push(row));
 
+                        var tableString = t.toString();
+                        var tableArray = tableString.split("\n");
+                        var headerWidths = [];
+                        tableArray[1].split(t.border.sep).forEach((e) => {
+                            headerWidths.push(e.replace(/[\u0000-\u001F\u007F-\u009F]/g, "").replace(/\[\d+m/g, "").length);
+                        });
+                        for (const [i, rowStr] of tableArray.slice(3).entries()) {
+                            var row = rowStr.split(t.border.sep);
+                            for (var [j, cell] of row.entries()) {
+                                while (cell.length < headerWidths[j]) {
+                                    cell += " ";
+                                    row[j] += " ";
+                                }
+                            }
+                            tableArray[i + 3] = row.join(t.border.sep)
+                        }
+                        tableArray.splice(1, 1);
+                        tableString = tableArray.join("\n");
+
                         console.log("\n" + chalk.bold("Route:"));
-                        console.log(t.toString());
+                        console.log(tableString);
 
                         process.exit(0);
                     }
